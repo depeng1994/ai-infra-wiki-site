@@ -74,6 +74,8 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
   .md-content__inner {
     margin-left: 0;
     margin-right: 0;
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-right: calc(1rem + env(safe-area-inset-right));
   }
 
   .md-typeset h1 {
@@ -82,6 +84,13 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
 
   .md-typeset h2 {
     font-size: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 44.9844em) {
+  .md-content__inner {
+    padding-left: calc(1.15rem + env(safe-area-inset-left));
+    padding-right: calc(1.15rem + env(safe-area-inset-right));
   }
 }
 CSS_EOF
