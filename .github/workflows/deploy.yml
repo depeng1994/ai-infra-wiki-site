@@ -21,8 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # TODO: replace OWNER after the GitHub account or organization is known.
-  CONTENT_REPOSITORY: OWNER/ai-infra-wiki
+  CONTENT_REPOSITORY: depeng1994/ai-infra-wiki
   CONTENT_REF: ${{ github.event.client_payload.content_ref || github.event.inputs.content_ref || 'main' }}
 
 jobs:

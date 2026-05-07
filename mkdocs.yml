@@ -1,9 +1,9 @@
 site_name: LLM Infra Wiki
 site_description: 从 first principles 出发的大模型系统与框架知识库
-site_url: https://OWNER.github.io/ai-infra-wiki-site/
+site_url: https://depeng1994.github.io/ai-infra-wiki-site/
 
-repo_url: https://github.com/OWNER/ai-infra-wiki
-repo_name: OWNER/ai-infra-wiki
+repo_url: https://github.com/depeng1994/ai-infra-wiki
+repo_name: depeng1994/ai-infra-wiki
 edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; AI Infra Wiki
@@ -144,6 +144,7 @@ nav:
       - 总览: 06-inference-serving/index.md
       - Prefill vs Decode: 06-inference-serving/prefill-decode.md
       - KV Cache: 06-inference-serving/kv-cache.md
+      - Hierarchical KV Cache: 06-inference-serving/hierarchical-kv-cache.md
       - PagedAttention: 06-inference-serving/paged-attention.md
       - Continuous Batching: 06-inference-serving/continuous-batching.md
       - CUDA/NPU Graph: 06-inference-serving/cuda-graph-npu-graph.md
@@ -164,6 +165,7 @@ nav:
       - Training MFU Optimization: 08-case-studies/training-mfu-optimization.md
       - Long Context Training: 08-case-studies/long-context-training.md
       - Low Latency Inference: 08-case-studies/low-latency-inference.md
+      - GLM-5 Prefill Optimization: 08-case-studies/zhipu-glm5-prefill-optimization.md
       - RLHF Throughput Optimization: 08-case-studies/rlhf-throughput-optimization.md
   - Data & Training Engineering:
       - 总览: 09-data-training-engineering/index.md
