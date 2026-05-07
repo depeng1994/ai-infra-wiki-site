@@ -1,0 +1,13 @@
+# MkDocs build output
+/site/
+
+# Content copied from the separate content repository during build
+/docs/
+
+# Local Python envs
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local copied content during development
+/content-repo/

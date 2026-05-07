@@ -1,0 +1,204 @@
+site_name: LLM Infra Wiki
+site_description: 从 first principles 出发的大模型系统与框架知识库
+site_url: https://OWNER.github.io/ai-infra-wiki-site/
+
+repo_url: https://github.com/OWNER/ai-infra-wiki
+repo_name: OWNER/ai-infra-wiki
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; AI Infra Wiki
+
+use_directory_urls: true
+strict: false
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - toc.follow
+    - content.code.copy
+    - content.code.select
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
+  font:
+    text: Noto Sans SC
+    code: JetBrains Mono
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: 本页目录
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - 首页: index.md
+  - 路线图: 00-roadmap.md
+  - Running Examples:
+      - 总览: 00-running-example/index.md
+      - DeepSeek-V3: 00-running-example/deepseek-v3.md
+      - DeepSeek-V4-Flash: 00-running-example/deepseek-v4-flash.md
+  - Compute & Memory:
+      - 总览: 01-compute-memory/index.md
+      - Transformer FLOPs: 01-compute-memory/transformer-flops.md
+      - Training FLOPs 6ND: 01-compute-memory/training-flops-6nd.md
+      - Activation Memory: 01-compute-memory/activation-memory.md
+      - Optimizer Memory: 01-compute-memory/optimizer-memory.md
+      - MFU/HFU/Roofline: 01-compute-memory/mfu-hfu-roofline.md
+  - Distributed Training:
+      - 总览: 02-distributed-training/index.md
+      - Collective Communication: 02-distributed-training/collective-communication.md
+      - Data Parallel: 02-distributed-training/data-parallel.md
+      - Tensor Parallel: 02-distributed-training/tensor-parallel.md
+      - Pipeline Parallel: 02-distributed-training/pipeline-parallel.md
+      - ZeRO/FSDP: 02-distributed-training/zero-fsdp.md
+      - Overlap: 02-distributed-training/overlap.md
+  - PyTorch Native:
+      - 总览: 03-pytorch-native/index.md
+      - DeviceMesh: 03-pytorch-native/devicemesh.md
+      - DTensor: 03-pytorch-native/dtensor.md
+      - FSDP2: 03-pytorch-native/fsdp2.md
+      - torch.compile: 03-pytorch-native/torch-compile.md
+      - Backend Integration: 03-pytorch-native/backend-integration.md
+  - Long Context:
+      - 总览: 04-long-context/index.md
+      - Sequence Parallel: 04-long-context/sequence-parallel.md
+      - Ulysses: 04-long-context/ulysses.md
+      - Ring Attention: 04-long-context/ring-attention.md
+      - Hybrid Context Parallel: 04-long-context/hybrid-context-parallel.md
+  - RLHF Systems:
+      - 总览: 05-rlhf-systems/index.md
+      - RLHF System Overview: 05-rlhf-systems/rlhf-system-overview.md
+      - Hybrid Engine: 05-rlhf-systems/hybrid-engine.md
+      - Piecewise Graph: 05-rlhf-systems/piecewise-graph.md
+      - Rollout Load Balancing: 05-rlhf-systems/rollout-load-balancing.md
+  - Inference Serving:
+      - 总览: 06-inference-serving/index.md
+      - Prefill vs Decode: 06-inference-serving/prefill-decode.md
+      - KV Cache: 06-inference-serving/kv-cache.md
+      - PagedAttention: 06-inference-serving/paged-attention.md
+      - Continuous Batching: 06-inference-serving/continuous-batching.md
+      - CUDA/NPU Graph: 06-inference-serving/cuda-graph-npu-graph.md
+      - Prefix Caching: 06-inference-serving/prefix-caching.md
+      - Chunked Prefill: 06-inference-serving/chunked-prefill.md
+      - Disaggregated Prefill/Decode: 06-inference-serving/disaggregated-prefill-decode.md
+      - Speculative Decoding: 06-inference-serving/speculative-decoding.md
+  - Profiling & Debugging:
+      - 总览: 07-profiling-debugging/index.md
+      - PyTorch Profiler: 07-profiling-debugging/pytorch-profiler.md
+      - Nsight: 07-profiling-debugging/nsight.md
+      - NPU CANN Profiler: 07-profiling-debugging/npu-cann-profiler.md
+      - OOM Debugging: 07-profiling-debugging/oom-debugging.md
+      - MFU Debugging: 07-profiling-debugging/mfu-debugging.md
+      - Communication Debugging: 07-profiling-debugging/communication-debugging.md
+  - Case Studies:
+      - 总览: 08-case-studies/index.md
+      - Training MFU Optimization: 08-case-studies/training-mfu-optimization.md
+      - Long Context Training: 08-case-studies/long-context-training.md
+      - Low Latency Inference: 08-case-studies/low-latency-inference.md
+      - RLHF Throughput Optimization: 08-case-studies/rlhf-throughput-optimization.md
+  - Data & Training Engineering:
+      - 总览: 09-data-training-engineering/index.md
+      - Tokenizer: 09-data-training-engineering/tokenizer.md
+      - Sequence Packing: 09-data-training-engineering/sequence-packing.md
+      - Dataloader Performance: 09-data-training-engineering/dataloader-performance.md
+      - Checkpointing: 09-data-training-engineering/checkpointing.md
+      - Fault Tolerance: 09-data-training-engineering/fault-tolerance-elastic-training.md
+  - Kernels & Operators:
+      - 总览: 10-kernels-operators/index.md
+      - FlashAttention: 10-kernels-operators/flash-attention.md
+      - Norm/RoPE Fusion: 10-kernels-operators/norm-rope-fusion.md
+      - SwiGLU Fusion: 10-kernels-operators/swiglu-fusion.md
+      - Triton Basics: 10-kernels-operators/triton-basics.md
+      - Custom Op Integration: 10-kernels-operators/custom-op-integration.md
+  - MoE Systems:
+      - 总览: 11-moe-systems/index.md
+      - MoE Overview: 11-moe-systems/moe-overview.md
+      - Expert Parallelism: 11-moe-systems/expert-parallelism.md
+      - Token Dispatch AllToAll: 11-moe-systems/token-dispatch-alltoall.md
+      - Load Balancing: 11-moe-systems/load-balancing.md
+      - MoE FLOPs/Memory: 11-moe-systems/moe-flops-memory.md
+  - Attention Architectures:
+      - 总览: 13-attention-architectures/index.md
+      - Dense Attention: 13-attention-architectures/dense-attention.md
+      - MHA/GQA/MQA: 13-attention-architectures/mha-gqa-mqa.md
+      - MLA: 13-attention-architectures/mla.md
+      - KV Cache FLOPs: 13-attention-architectures/attention-kv-cache-flops.md
+      - Sliding Window: 13-attention-architectures/sliding-window-attention.md
+      - Sparse Attention: 13-attention-architectures/sparse-attention.md
+      - Compressed Attention: 13-attention-architectures/compressed-attention.md
+      - DeepSeek-V4 Hybrid Attention: 13-attention-architectures/hybrid-attention-deepseek-v4.md
+  - Wiki Meta:
+      - Writing Template: 12-wiki-meta/writing-template.md
+      - Diagram Guide: 12-wiki-meta/diagram-guide.md
+      - Citation Guide: 12-wiki-meta/citation-guide.md
+  - Glossary: glossary.md
+  - References: references.md
