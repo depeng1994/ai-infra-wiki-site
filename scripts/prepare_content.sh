@@ -128,12 +128,24 @@ const renderMermaid = async () => {
     securityLevel: "loose"
   });
 
-  const nodes = document.querySelectorAll(".mermaid");
+  const nodes = document.querySelectorAll("pre.mermaid, .mermaid");
+  nodes.forEach((node) => {
+    if (node.tagName.toLowerCase() === "pre") {
+      const code = node.querySelector("code");
+      node.textContent = code ? code.textContent : node.textContent;
+    }
+    node.removeAttribute("data-processed");
+  });
+
   if (!nodes.length) {
     return;
   }
 
-  await mermaid.run({ nodes });
+  try {
+    await mermaid.run({ nodes });
+  } catch (error) {
+    console.error("Mermaid render failed", error);
+  }
 };
 
 document$.subscribe(() => {
