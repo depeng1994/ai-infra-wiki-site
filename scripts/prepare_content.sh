@@ -93,7 +93,48 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
     padding-right: calc(1.15rem + env(safe-area-inset-right));
   }
 }
+
+/* Keep long MathJax display equations readable on mobile. */
+.md-typeset .arithmatex {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.md-typeset mjx-container[jax="CHTML"][display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.25rem 0;
+}
 CSS_EOF
+
+mkdir -p "${SITE_ROOT}/docs/javascripts"
+cat > "${SITE_ROOT}/docs/javascripts/mathjax.js" <<'JS_EOF'
+window.MathJax = {
+  tex: {
+    inlineMath: [["\\(", "\\)"], ["$", "$"]],
+    displayMath: [["\\[", "\\]"], ["$$", "$$"]],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    ignoreHtmlClass: ".*|",
+    processHtmlClass: "arithmatex"
+  }
+};
+
+document$.subscribe(() => {
+  if (!window.MathJax || !MathJax.typesetPromise) {
+    return;
+  }
+
+  MathJax.startup.output.clearCache();
+  MathJax.typesetClear();
+  MathJax.texReset();
+  MathJax.typesetPromise();
+});
+JS_EOF
 
 # Ensure MkDocs has a homepage even if the content repo has not added one yet.
 if [[ ! -f "${SITE_ROOT}/docs/index.md" ]]; then
