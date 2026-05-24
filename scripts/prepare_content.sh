@@ -110,6 +110,44 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
 CSS_EOF
 
 mkdir -p "${SITE_ROOT}/docs/javascripts"
+
+cat > "${SITE_ROOT}/docs/javascripts/mermaid.js" <<'JS_EOF'
+const getMermaidTheme = () => {
+  const scheme = document.body.getAttribute("data-md-color-scheme");
+  return scheme === "slate" ? "dark" : "default";
+};
+
+const renderMermaid = async () => {
+  if (!window.mermaid) {
+    return;
+  }
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: getMermaidTheme(),
+    securityLevel: "loose"
+  });
+
+  const nodes = document.querySelectorAll(".mermaid");
+  if (!nodes.length) {
+    return;
+  }
+
+  await mermaid.run({ nodes });
+};
+
+document$.subscribe(() => {
+  renderMermaid();
+});
+
+const palette = document.querySelector("[data-md-component=palette]");
+if (palette) {
+  palette.addEventListener("change", () => {
+    location.reload();
+  });
+}
+JS_EOF
+
 cat > "${SITE_ROOT}/docs/javascripts/mathjax.js" <<'JS_EOF'
 window.MathJax = {
   tex: {
