@@ -109,6 +109,13 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
 }
 CSS_EOF
 
+
+# Keep site-owned JavaScript vendors available after docs/ is regenerated.
+if [[ -d "${SITE_ROOT}/assets/javascripts" ]]; then
+  mkdir -p "${SITE_ROOT}/docs/assets/javascripts"
+  cp -R "${SITE_ROOT}/assets/javascripts/." "${SITE_ROOT}/docs/assets/javascripts/"
+fi
+
 mkdir -p "${SITE_ROOT}/docs/javascripts"
 
 cat > "${SITE_ROOT}/docs/javascripts/mermaid.js" <<'JS_EOF'
@@ -128,13 +135,19 @@ const renderMermaid = async () => {
     securityLevel: "loose"
   });
 
-  const nodes = document.querySelectorAll("pre.mermaid, .mermaid");
-  nodes.forEach((node) => {
+  const nodes = [];
+  document.querySelectorAll("pre.mermaid, .mermaid").forEach((node) => {
     if (node.tagName.toLowerCase() === "pre") {
       const code = node.querySelector("code");
-      node.textContent = code ? code.textContent : node.textContent;
+      const replacement = document.createElement("pre");
+      replacement.className = node.className;
+      replacement.textContent = code ? code.textContent.trim() : node.textContent.trim();
+      node.replaceWith(replacement);
+      nodes.push(replacement);
+    } else {
+      node.removeAttribute("data-processed");
+      nodes.push(node);
     }
-    node.removeAttribute("data-processed");
   });
 
   if (!nodes.length) {
@@ -152,12 +165,20 @@ document$.subscribe(() => {
   renderMermaid();
 });
 
-const palette = document.querySelector("[data-md-component=palette]");
-if (palette) {
-  palette.addEventListener("change", () => {
-    location.reload();
-  });
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", renderMermaid, { once: true });
+} else {
+  renderMermaid();
 }
+
+(() => {
+  const palette = document.querySelector("[data-md-component=palette]");
+  if (palette) {
+    palette.addEventListener("change", () => {
+      location.reload();
+    });
+  }
+})();
 JS_EOF
 
 cat > "${SITE_ROOT}/docs/javascripts/mathjax.js" <<'JS_EOF'
