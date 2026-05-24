@@ -110,6 +110,7 @@ nav:
       - 总览: 01-compute-memory/index.md
       - Transformer FLOPs: 01-compute-memory/transformer-flops.md
       - Training FLOPs 6ND: 01-compute-memory/training-flops-6nd.md
+      - Cross Entropy 与 Softmax: 01-compute-memory/cross-entropy-softmax.md
       - Activation Memory: 01-compute-memory/activation-memory.md
       - Optimizer Memory: 01-compute-memory/optimizer-memory.md
       - MFU/HFU/Roofline: 01-compute-memory/mfu-hfu-roofline.md
