@@ -137,6 +137,10 @@ const renderMermaid = async () => {
 
   const nodes = [];
   document.querySelectorAll("pre.mermaid, .mermaid").forEach((node) => {
+    if (node.querySelector("svg") || node.getAttribute("data-processed") === "true") {
+      return;
+    }
+
     if (node.tagName.toLowerCase() === "pre") {
       const code = node.querySelector("code");
       const replacement = document.createElement("pre");
@@ -145,7 +149,6 @@ const renderMermaid = async () => {
       node.replaceWith(replacement);
       nodes.push(replacement);
     } else {
-      node.removeAttribute("data-processed");
       nodes.push(node);
     }
   });

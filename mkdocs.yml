@@ -130,6 +130,7 @@ nav:
       - DeviceMesh: 03-pytorch-native/devicemesh.md
       - DTensor: 03-pytorch-native/dtensor.md
       - FSDP2: 03-pytorch-native/fsdp2.md
+      - TorchTitan: 03-pytorch-native/torchtitan.md
       - torch.compile: 03-pytorch-native/torch-compile.md
       - Backend Integration: 03-pytorch-native/backend-integration.md
   - Long Context:
