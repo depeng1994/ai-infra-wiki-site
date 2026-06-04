@@ -94,6 +94,76 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
   }
 }
 
+
+/* Match the desktop primary sidebar to the mobile drawer style. */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 12.1rem;
+  }
+
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    background: var(--md-default-bg-color);
+    border-right: 1px solid var(--md-default-fg-color--lightest);
+    box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.08);
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__title {
+    display: block;
+    min-height: 5.6rem;
+    margin: 0;
+    padding: 1rem 1.2rem 0.9rem;
+    background: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__title .md-logo {
+    display: block;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin: 0 0 0.45rem;
+    padding: 0;
+    color: currentColor;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__title .md-logo svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__source {
+    display: none;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__list {
+    padding: 0;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item {
+    border-top: 1px solid var(--md-default-fg-color--lightest);
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
+    min-height: 2.4rem;
+    margin: 0;
+    padding: 0.65rem 1.2rem;
+    color: var(--md-default-fg-color);
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link:is(:hover, :focus),
+  .md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link--active {
+    color: var(--md-accent-fg-color);
+  }
+
+  .md-sidebar--primary .md-nav--primary .md-nav__icon {
+    margin-left: auto;
+  }
+}
+
 /* Keep long MathJax display equations readable on mobile. */
 .md-typeset .arithmatex {
   overflow-x: auto;
