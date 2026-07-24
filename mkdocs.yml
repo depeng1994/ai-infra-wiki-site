@@ -11,6 +11,10 @@ copyright: Copyright &copy; AI Infra Wiki
 use_directory_urls: true
 strict: false
 
+# Planning/specification files live in the content repository for maintainers,
+# but are not publishable Wiki pages.
+exclude_docs: superpowers/
+
 theme:
   name: material
   language: zh
@@ -111,8 +115,8 @@ nav:
       - Transformer FLOPs: 01-compute-memory/transformer-flops.md
       - Training FLOPs 6ND: 01-compute-memory/training-flops-6nd.md
       - Cross Entropy 与 Softmax: 01-compute-memory/cross-entropy-softmax.md
-      - Activation Memory: 01-compute-memory/activation-memory.md
       - Optimizer Memory: 01-compute-memory/optimizer-memory.md
+      - Activation Memory: 01-compute-memory/activation-memory.md
       - MFU/HFU/Roofline: 01-compute-memory/mfu-hfu-roofline.md
   - Distributed Training:
       - 总览: 02-distributed-training/index.md
@@ -126,10 +130,13 @@ nav:
       - 总览: 03-pytorch-native/index.md
       - DeviceMesh: 03-pytorch-native/devicemesh.md
       - DTensor: 03-pytorch-native/dtensor.md
-      - FSDP2: 03-pytorch-native/fsdp2.md
-      - TorchTitan: 03-pytorch-native/torchtitan.md
+      - TorchTitan SPMD Types: 03-pytorch-native/spmd-types.md
+      - FSDP2：per-parameter shard、HSDP 与通信生命周期: 03-pytorch-native/fsdp2.md
       - torch.compile: 03-pytorch-native/torch-compile.md
       - Backend Integration: 03-pytorch-native/backend-integration.md
+      - TorchTitan: 03-pytorch-native/torchtitan.md
+      - DCP 分片保存与恢复: 09-data-training-engineering/checkpointing.md
+      - RL 训推权重同步与在线 Reshard: 05-rlhf-systems/hybrid-engine.md
   - Long Context:
       - 总览: 04-long-context/index.md
       - Sequence Parallel: 04-long-context/sequence-parallel.md
@@ -146,11 +153,11 @@ nav:
       - 总览: 06-inference-serving/index.md
       - Prefill vs Decode: 06-inference-serving/prefill-decode.md
       - KV Cache: 06-inference-serving/kv-cache.md
-      - Hierarchical KV Cache: 06-inference-serving/hierarchical-kv-cache.md
       - PagedAttention: 06-inference-serving/paged-attention.md
       - Continuous Batching: 06-inference-serving/continuous-batching.md
       - CUDA/NPU Graph: 06-inference-serving/cuda-graph-npu-graph.md
       - Prefix Caching: 06-inference-serving/prefix-caching.md
+      - Hierarchical KV Cache: 06-inference-serving/hierarchical-kv-cache.md
       - Chunked Prefill: 06-inference-serving/chunked-prefill.md
       - Disaggregated Prefill/Decode: 06-inference-serving/disaggregated-prefill-decode.md
       - Speculative Decoding: 06-inference-serving/speculative-decoding.md
@@ -195,11 +202,11 @@ nav:
       - Dense Attention: 13-attention-architectures/dense-attention.md
       - MHA/GQA/MQA: 13-attention-architectures/mha-gqa-mqa.md
       - MLA: 13-attention-architectures/mla.md
-      - KV Cache FLOPs: 13-attention-architectures/attention-kv-cache-flops.md
       - Sliding Window: 13-attention-architectures/sliding-window-attention.md
       - Sparse Attention: 13-attention-architectures/sparse-attention.md
       - Compressed Attention: 13-attention-architectures/compressed-attention.md
       - DeepSeek-V4 Hybrid Attention: 13-attention-architectures/hybrid-attention-deepseek-v4.md
+      - KV Cache FLOPs: 13-attention-architectures/attention-kv-cache-flops.md
   - Wiki Meta:
       - Writing Template: 12-wiki-meta/writing-template.md
       - Diagram Guide: 12-wiki-meta/diagram-guide.md

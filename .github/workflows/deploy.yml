@@ -65,6 +65,9 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r site-repo/requirements.txt
 
+      - name: Validate navigation consistency
+        run: python site-repo/scripts/check_nav_consistency.py --site-root site-repo --docs-root site-repo/docs
+
       - name: Build site
         run: mkdocs build --clean --config-file site-repo/mkdocs.yml
 
