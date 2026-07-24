@@ -98,6 +98,8 @@ extra_javascript:
   - assets/javascripts/vendor/mermaid.min.js
   - javascripts/mermaid.js
   - javascripts/mathjax.js
+  - javascripts/desktop-drawer.js?v=20260724-drawer-pin
+  - javascripts/instant-navigation.js?v=20260724-content-only-2
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:

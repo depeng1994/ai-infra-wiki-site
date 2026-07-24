@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 grep -Fq 'stylesheets/extra.css?v=20260724-drawer-parity' "${ROOT}/mkdocs.yml"
+grep -Fq 'javascripts/desktop-drawer.js?v=20260724-drawer-pin' "${ROOT}/mkdocs.yml"
+grep -Fq 'javascripts/instant-navigation.js?v=20260724-content-only-2' "${ROOT}/mkdocs.yml"
 TMP_ROOT="$(mktemp -d /mnt/workspace/ai-infra-wiki-layout-test.XXXXXX)"
 trap 'rm -rf "${TMP_ROOT}"' EXIT
 
@@ -33,7 +35,14 @@ grep -Fq 'grid-template-rows: none;' "${CSS}"
 grep -Fq 'visibility: visible;' "${CSS}"
 grep -Fq 'position: fixed;' "${CSS}"
 grep -Fq 'transform: translateX(12.1rem);' "${CSS}"
+grep -Fq '[data-md-toggle="drawer"]:checked ~ .md-header {' "${CSS}"
+grep -Fq '[data-md-toggle="drawer"]:checked ~ .md-container .md-main {' "${CSS}"
+grep -Fq '[data-md-toggle="drawer"]:checked ~ .md-container .md-footer {' "${CSS}"
 grep -Fq '[data-md-toggle="drawer"]:checked ~ .md-overlay {' "${CSS}"
+grep -Fq 'pointer-events: none;' "${CSS}"
+grep -Fq '.md-drawer-pin {' "${CSS}"
+grep -Fq 'html.md-drawer-navigation-lock .md-header {' "${CSS}"
+grep -Fq 'transform: translateX(12.1rem);' "${CSS}"
 grep -Fq '.md-nav__toggle ~ .md-nav {' "${CSS}"
 grep -Fq 'transform: translateX(100%);' "${CSS}"
 if grep -Fq 'width: max-content;' "${CSS}" || grep -Fq '.md-nav--primary:hover' "${CSS}"; then
@@ -42,5 +51,17 @@ if grep -Fq 'width: max-content;' "${CSS}" || grep -Fq '.md-nav--primary:hover' 
 fi
 grep -Fq '@media screen and (max-width: 76.2344em)' "${CSS}"
 grep -Fq 'padding-left: calc(1rem + env(safe-area-inset-left));' "${CSS}"
+
+JS="${TMP_ROOT}/docs/javascripts/desktop-drawer.js"
+test -f "${JS}"
+grep -Fq 'llm-infra-wiki:desktop-drawer-pinned' "${JS}"
+grep -Fq 'document$.subscribe' "${JS}"
+grep -Fq 'aria-pressed' "${JS}"
+
+NAV_JS="${TMP_ROOT}/docs/javascripts/instant-navigation.js"
+test -f "${NAV_JS}"
+grep -Fq 'DOMParser' "${NAV_JS}"
+grep -Fq 'md-sidebar--primary' "${NAV_JS}"
+grep -Fq 'currentContent.replaceWith(nextContent)' "${NAV_JS}"
 
 echo "desktop layout CSS contract: PASS"

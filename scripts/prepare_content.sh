@@ -124,6 +124,91 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
     display: none;
   }
 
+  .md-header,
+  .md-main,
+  .md-footer {
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-md-toggle="drawer"]:checked ~ .md-header {
+    margin-left: 12.1rem;
+    width: calc(100% - 12.1rem);
+  }
+
+  [data-md-toggle="drawer"]:checked ~ .md-container .md-main {
+    margin-left: 12.1rem;
+    width: calc(100% - 12.1rem);
+  }
+
+  [data-md-toggle="drawer"]:checked ~ .md-container .md-footer {
+    margin-left: 12.1rem;
+    width: calc(100% - 12.1rem);
+  }
+
+  [dir="rtl"] [data-md-toggle="drawer"]:checked ~ .md-header,
+  [dir="rtl"] [data-md-toggle="drawer"]:checked ~ .md-container .md-main,
+  [dir="rtl"] [data-md-toggle="drawer"]:checked ~ .md-container .md-footer {
+    margin-right: 12.1rem;
+    margin-left: 0;
+  }
+
+  html.md-drawer-navigation-lock .md-header {
+    margin-left: 12.1rem !important;
+    width: calc(100% - 12.1rem) !important;
+  }
+
+  html.md-drawer-navigation-lock .md-container .md-main,
+  html.md-drawer-navigation-lock .md-container .md-footer {
+    margin-left: 12.1rem !important;
+    width: calc(100% - 12.1rem) !important;
+  }
+
+  html[dir="rtl"].md-drawer-navigation-lock .md-header,
+  html[dir="rtl"].md-drawer-navigation-lock .md-container .md-main,
+  html[dir="rtl"].md-drawer-navigation-lock .md-container .md-footer {
+    margin-right: 12.1rem !important;
+    margin-left: 0 !important;
+  }
+
+  html.md-drawer-navigation-lock .md-sidebar--primary {
+    box-shadow: var(--md-shadow-z3);
+    transform: translateX(12.1rem) !important;
+  }
+
+  .md-drawer-pin {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.8rem;
+    padding: 0.15rem 0.45rem;
+    border: 0.05rem solid transparent;
+    border-radius: 0.2rem;
+    color: var(--md-default-fg-color--light);
+    font: inherit;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .md-drawer-pin:hover,
+  .md-drawer-pin:focus-visible {
+    border-color: currentcolor;
+    color: var(--md-accent-fg-color);
+    outline: none;
+  }
+
+  [dir="rtl"] .md-drawer-pin {
+    right: auto;
+    left: 0.55rem;
+  }
+
   .md-sidebar--secondary:not([hidden]) {
     display: none;
   }
@@ -435,10 +520,11 @@ cat > "${SITE_ROOT}/docs/stylesheets/extra.css" <<'CSS_EOF'
   }
 
   [data-md-toggle="drawer"]:checked ~ .md-overlay {
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-    transition: width 0ms, height 0ms, opacity 0.25s;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: width 0ms 0.25s, height 0ms 0.25s, opacity 0.25s;
   }
 }
 
@@ -556,6 +642,340 @@ document$.subscribe(() => {
   MathJax.texReset();
   MathJax.typesetPromise();
 });
+JS_EOF
+
+cat > "${SITE_ROOT}/docs/javascripts/desktop-drawer.js" <<'JS_EOF'
+(() => {
+  const STORAGE_KEY = "llm-infra-wiki:desktop-drawer-pinned";
+  const DESKTOP_QUERY = "(min-width: 76.25em)";
+
+  const isDesktop = () => window.matchMedia(DESKTOP_QUERY).matches;
+
+  const readPinned = () => {
+    try {
+      return window.localStorage.getItem(STORAGE_KEY) === "true";
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const writePinned = (pinned) => {
+    try {
+      if (pinned) {
+        window.localStorage.setItem(STORAGE_KEY, "true");
+      } else {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch (error) {
+      // A blocked storage area must not disable the drawer itself.
+    }
+  };
+
+  const getDrawer = () => document.querySelector("#__drawer");
+
+  const updateButton = (button, pinned) => {
+    button.setAttribute("aria-pressed", String(pinned));
+    button.setAttribute("aria-label", pinned ? "取消固定侧边导航" : "固定侧边导航");
+    button.textContent = pinned ? "已固定" : "固定";
+  };
+
+  const syncDrawer = () => {
+    const drawer = getDrawer();
+    if (!drawer) {
+      return;
+    }
+
+    const pinned = readPinned();
+    if (pinned && !drawer.checked) {
+      drawer.checked = pinned;
+      drawer.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    document.querySelectorAll("button.md-drawer-pin").forEach((button) => {
+      updateButton(button, pinned);
+    });
+  };
+
+  const installDrawerGuard = () => {
+    const drawer = getDrawer();
+    if (!drawer || drawer.dataset.desktopDrawerGuard === "true") {
+      return;
+    }
+
+    drawer.dataset.desktopDrawerGuard = "true";
+    drawer.addEventListener("change", () => {
+      if (isDesktop() && readPinned() && !drawer.checked) {
+        drawer.checked = true;
+      }
+
+      document.querySelectorAll("button.md-drawer-pin").forEach((button) => {
+        updateButton(button, readPinned());
+      });
+    });
+  };
+
+  const installPinButton = () => {
+    if (!isDesktop()) {
+      const drawer = getDrawer();
+      if (drawer && drawer.checked) {
+        drawer.checked = false;
+        drawer.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      document.querySelectorAll("button.md-drawer-pin").forEach((button) => button.remove());
+      return;
+    }
+
+    const nav = document.querySelector(".md-nav--primary");
+    if (!nav) {
+      return;
+    }
+
+    let button = nav.querySelector("button.md-drawer-pin");
+    if (!button) {
+      button = document.createElement("button");
+      button.className = "md-drawer-pin";
+      button.type = "button";
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const pinned = !readPinned();
+        writePinned(pinned);
+        if (!pinned) {
+          const drawer = getDrawer();
+          if (drawer && drawer.checked) {
+            drawer.checked = false;
+            drawer.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+        syncDrawer();
+      });
+      nav.prepend(button);
+    }
+
+    updateButton(button, readPinned());
+    installDrawerGuard();
+    syncDrawer();
+  };
+
+  const render = () => {
+    installPinButton();
+  };
+
+  const mediaQuery = window.matchMedia(DESKTOP_QUERY);
+  if (mediaQuery.addEventListener) {
+    mediaQuery.addEventListener("change", render);
+  } else {
+    mediaQuery.addListener(render);
+  }
+
+  if (window.document$ && typeof document$.subscribe === "function") {
+    document$.subscribe(render);
+  } else {
+    document.addEventListener("DOMContentLoaded", render, { once: true });
+  }
+
+  render();
+})();
+JS_EOF
+
+cat > "${SITE_ROOT}/docs/javascripts/instant-navigation.js" <<'JS_EOF'
+(() => {
+  let navigating = false;
+  let pendingNavigation = null;
+  let preserveDrawerOpenUntil = 0;
+
+  const pathOf = (url) => `${url.pathname}${url.search}`.replace(/\/$/, "") || "/";
+
+  const isInternalPageLink = (event, link) => {
+    if (!link || link.target || link.hasAttribute("download")) {
+      return false;
+    }
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return false;
+    }
+
+    const url = new URL(link.href, window.location.href);
+    return url.origin === window.location.origin && pathOf(url) !== pathOf(new URL(window.location.href));
+  };
+
+  const updatePrimaryNavigation = (url) => {
+    const primary = document.querySelector(".md-sidebar--primary");
+    if (!primary) {
+      return;
+    }
+
+    const targetPath = pathOf(url);
+    const primaryNav = primary.querySelector(".md-nav--primary");
+    primary.querySelectorAll(".md-nav__item--active").forEach((item) => {
+      item.classList.remove("md-nav__item--active");
+    });
+    primary.querySelectorAll("input.md-nav__toggle").forEach((toggle) => {
+      toggle.checked = false;
+      const childNav = toggle.parentElement.querySelector(":scope > nav.md-nav");
+      if (childNav) {
+        childNav.setAttribute("aria-expanded", "false");
+      }
+    });
+    primary.querySelectorAll("a.md-nav__link").forEach((link) => {
+      const linkUrl = new URL(link.href, window.location.href);
+      const active = !linkUrl.hash && pathOf(linkUrl) === targetPath;
+      link.classList.toggle("md-nav__link--active", active);
+      const item = link.closest(".md-nav__item");
+      if (item) {
+        item.classList.toggle("md-nav__item--active", active);
+      }
+      if (active) {
+        link.setAttribute("aria-current", "page");
+        let branchNav = link.closest("nav.md-nav");
+        while (branchNav && branchNav !== primaryNav) {
+          const branch = branchNav.closest(".md-nav__item--nested");
+          if (!branch) {
+            break;
+          }
+          branch.classList.add("md-nav__item--active");
+          const toggle = branch.querySelector(":scope > input.md-nav__toggle");
+          const childNav = branch.querySelector(":scope > nav.md-nav");
+          if (toggle) {
+            toggle.checked = true;
+          }
+          if (childNav) {
+            childNav.setAttribute("aria-expanded", "true");
+          }
+          branchNav = branch.parentElement.closest("nav.md-nav");
+        }
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  };
+
+  const replaceRightPane = (nextDocument) => {
+    const currentContent = document.querySelector(".md-content");
+    const nextContent = nextDocument.querySelector(".md-content");
+    if (!currentContent || !nextContent) {
+      throw new Error("instant navigation content target is missing");
+    }
+    currentContent.replaceWith(nextContent);
+
+    const currentSecondary = document.querySelector(".md-sidebar--secondary");
+    const nextSecondary = nextDocument.querySelector(".md-sidebar--secondary");
+    if (currentSecondary && nextSecondary) {
+      currentSecondary.replaceWith(nextSecondary);
+    }
+
+    const currentFooter = document.querySelector(".md-footer");
+    const nextFooter = nextDocument.querySelector(".md-footer");
+    if (currentFooter && nextFooter) {
+      currentFooter.replaceWith(nextFooter);
+    }
+  };
+
+  const navigate = async (url, pushState) => {
+    if (navigating) {
+      pendingNavigation = { url, pushState };
+      return;
+    }
+    navigating = true;
+    const drawer = document.querySelector("#__drawer");
+    const preservedPrimary = document.querySelector(".md-sidebar--primary");
+    const drawerWasOpen = window.matchMedia("(min-width: 76.25em)").matches
+      && Boolean(drawer && drawer.checked);
+    const primaryObserver = preservedPrimary ? new MutationObserver(() => {
+      const currentPrimary = document.querySelector(".md-sidebar--primary");
+      if (currentPrimary && currentPrimary !== preservedPrimary) {
+        currentPrimary.replaceWith(preservedPrimary);
+      }
+    }) : null;
+    if (primaryObserver) {
+      primaryObserver.observe(document.body, { childList: true, subtree: true });
+      window.setTimeout(() => primaryObserver.disconnect(), 2000);
+    }
+    preserveDrawerOpenUntil = drawerWasOpen ? Date.now() + 2000 : 0;
+    if (drawerWasOpen) {
+      document.documentElement.classList.add("md-drawer-navigation-lock");
+    }
+    try {
+      const response = await fetch(url.href, { headers: { Accept: "text/html" } });
+      if (!response.ok) {
+        throw new Error(`instant navigation request failed: ${response.status}`);
+      }
+      const nextDocument = new DOMParser().parseFromString(await response.text(), "text/html");
+      replaceRightPane(nextDocument);
+      document.title = nextDocument.title;
+      updatePrimaryNavigation(url);
+      window.scrollTo(0, 0);
+      if (window.document$ && typeof document$.next === "function") {
+        document$.next(document);
+      }
+      const currentPrimary = document.querySelector(".md-sidebar--primary");
+      if (preservedPrimary && currentPrimary && currentPrimary !== preservedPrimary) {
+        currentPrimary.replaceWith(preservedPrimary);
+      }
+      if (pushState) {
+        window.history.pushState({}, "", url.href);
+      }
+      if (drawerWasOpen) {
+        const restoreDrawer = window.setInterval(() => {
+          const currentDrawer = document.querySelector("#__drawer");
+          if (currentDrawer && !currentDrawer.checked) {
+            currentDrawer.checked = true;
+          }
+        }, 25);
+        window.setTimeout(() => {
+          const currentDrawer = document.querySelector("#__drawer");
+          if (currentDrawer && !currentDrawer.checked) {
+            currentDrawer.checked = true;
+          }
+          window.clearInterval(restoreDrawer);
+          document.documentElement.classList.remove("md-drawer-navigation-lock");
+        }, 1500);
+      }
+      window.setTimeout(() => {
+        preserveDrawerOpenUntil = 0;
+      }, 2000);
+    } catch (error) {
+      window.location.href = url.href;
+    } finally {
+      navigating = false;
+      if (pendingNavigation) {
+        const pending = pendingNavigation;
+        pendingNavigation = null;
+        navigate(pending.url, pending.pushState);
+      }
+    }
+  };
+
+  document.addEventListener("click", (event) => {
+    if (Date.now() < preserveDrawerOpenUntil && event.target === document.querySelector("#__drawer")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+    const link = event.target.closest("a");
+    if (!isInternalPageLink(event, link)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(new URL(link.href, window.location.href), true);
+  }, true);
+
+  document.addEventListener("change", (event) => {
+    const drawer = document.querySelector("#__drawer");
+    if (Date.now() < preserveDrawerOpenUntil && event.target === drawer && !drawer.checked) {
+      drawer.checked = true;
+      event.stopImmediatePropagation();
+    }
+  }, true);
+
+  window.addEventListener("popstate", (event) => {
+    event.stopImmediatePropagation();
+    navigate(new URL(window.location.href), false);
+  }, true);
+})();
 JS_EOF
 
 # Ensure MkDocs has a homepage even if the content repo has not added one yet.
