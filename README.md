@@ -28,6 +28,16 @@ If your local content checkout is still named `wiki-zdp`, run:
 mkdocs serve
 ```
 
+## Layout regression checks
+
+```bash
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+playwright install chromium
+bash scripts/test_desktop_layout.sh
+python scripts/test_desktop_layout_browser.py --url http://127.0.0.1:8000/
+```
+
 ## GitHub setup placeholders
 
 Replace `OWNER` in these files after the GitHub account or organization name is known:
